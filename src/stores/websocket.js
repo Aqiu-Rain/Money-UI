@@ -34,10 +34,10 @@ export const useWebSocketStore = defineStore('websocketStore', {
                 this.message = e
             };
             this.socket.onmessage = (e) => {
-                console.log(e.data)
-                console.log('=========================')
-
-                this.setData(e.data)
+                const parsedData = JSON.parse(e.data);
+                if(parsedData.type === "serial_data") {
+                    this.setData(parsedData.data)
+                }
             }
         },
         disconnect() {

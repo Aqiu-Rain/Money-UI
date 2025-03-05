@@ -1,12 +1,17 @@
 <script setup>
 import {reactive, ref, onMounted} from 'vue'
-import {get_setting, update_setting} from "@/apis/settings.js";
+import {get_setting, update_setting, get_ports} from "@/apis/settings.js";
 import {useSettingStore} from "@/stores/settings.js";
 import {showMessage} from "@/utils/message.js";
 
 const formRef = ref(null)
 const store = useSettingStore();
 
+
+
+const Ports = ref(
+    [],
+)
 
 const ByteSize = ref(
     [5, 6, 7, 8],
@@ -21,14 +26,14 @@ const StopBits = ref(
 )
 
 const boteRates = ref(
-    [9600, 14400, 19200, 38400, 43000, 57600, 76800, 115200, 128000],
+    [384000],
 )
 
 
 // do not use same name with ref
 const form = reactive({
   port: '',
-  baudrate: 38400,
+  baudrate: 384000,
   bytesize: 8,
   parity: 'N',
   stopbits: 1,
@@ -60,6 +65,12 @@ onMounted(() => {
   }).catch((err) => {
     showMessage('error', err)
   })
+
+  get_ports().then((res) => {
+    Ports.value = res.data
+  }).catch((err) => {
+    showMessage('error', err)
+  })
 })
 
 
@@ -88,7 +99,9 @@ const updateConfig = (FormEl) => {
     <div class="setting-box">
       <el-form :model="form" label-width="100" ref="formRef" :rules="rules" style="width: 100%;">
         <el-form-item label="端口号" prop="port">
-          <el-input v-model="form.port"/>
+          <el-select v-model="form.port" placeholder="请选择端口">
+            <el-option v-for="item in Ports" :label="item.Desc" :value="item.Port" :key="item.Port"/>
+          </el-select>
         </el-form-item>
         <el-form-item label="波特率" prop="baudrate">
           <el-select v-model="form.baudrate" placeholder="请选择波特率">

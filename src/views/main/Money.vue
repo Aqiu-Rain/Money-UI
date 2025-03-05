@@ -1,6 +1,7 @@
 <script setup>
 import {ref, onMounted, computed} from "vue";
 import {Search, Money, SwitchButton, Remove} from "@element-plus/icons-vue";
+import {get_money_pages} from "@/apis/money.js";
 
 const searchText = ref('')
 const tableHeight = computed(() => {
@@ -29,7 +30,7 @@ const tableData = [
   <div class="container">
     <div class="header">
       <div class="header-left">
-        点钞历史记录
+        <h3 style="font-family: 幼圆,serif">点钞历史记录</h3>
       </div>
       <div class="header-right">
         <div class="search-container">
@@ -40,9 +41,9 @@ const tableData = [
               :suffix-icon="Search"/>
         </div>
         <div class="function-area">
-          <el-button :icon="SwitchButton" circle type="primary"></el-button>
-          <el-button :icon="SwitchButton" circle type="primary"></el-button>
-          <el-button :icon="Remove" circle type="danger"></el-button>
+          <el-button circle></el-button>
+          <el-button circle></el-button>
+          <el-button  circle></el-button>
         </div>
       </div>
     </div>
@@ -75,7 +76,7 @@ const tableData = [
 
 .header {
   height: 50px;
-  border: 1px solid lightgray;
+  border: 1px solid #e9e9ea;
   margin-bottom: 10px;
   margin-top: 10px;
   display: flex;

@@ -19,5 +19,12 @@ export function update_setting(data) {
     )
 }
 
-
+export function get_ports() {
+    return axios(
+        {
+            method: 'get',
+            url: '/config/serials'
+        }
+    )
+}
 
