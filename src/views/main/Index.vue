@@ -5,13 +5,12 @@ import {useWebSocketStore} from "@/stores/websocket.js";
 import {showMessage} from "@/utils/message.js";
 import {get_setting} from "@/apis/settings.js";
 import {useSettingStore} from "@/stores/settings.js";
-import startImage from "@/assets/image/start.jpeg"
-
 
 const searchText = ref('')
 const tableHeight = computed(() => {
   return window.innerHeight - 80;
 })
+
 const store = useWebSocketStore();
 const settingStore = useSettingStore();
 
@@ -29,8 +28,6 @@ const handleConnect = () => {
   store.connect(url)
 
   setTimeout(() => {
-    console.log(store.socket.readyState)
-
     if (store.socket.readyState === WebSocket.OPEN) {
       let data = {
         cmd: 'start',
@@ -39,31 +36,11 @@ const handleConnect = () => {
       store.sendData(data)
     }
   }, 1000)
-
-
 }
-
 
 const handleClose = () => {
   store.disconnect()
 }
-
-
-// const tableData = [
-//   {
-//     date: '2016-05-03',
-//     time: 'Tom',
-//     tf_flag: 'California',
-//     valuta: 'Los Angeles',
-//     fsn_count: 0,
-//     money_flag: [],
-//     char_num: 'CA 90036',
-//     sno: [],
-//     machine_sno: [],
-//     reserve1: 0,
-//     image_sno: ''
-//   },
-// ]
 </script>
 
 
@@ -82,9 +59,16 @@ const handleClose = () => {
               :suffix-icon="Search"/>
         </div>
         <div class="function-area">
-          <el-tag round type="primary" style="margin-right: 15px;">{{ store.status }}</el-tag>
-          <el-button :icon="Service" round type="primary" @click="handleConnect">Start</el-button>
-          <el-button :icon="SwitchButton" round type="danger" @click="handleClose">Stop</el-button>
+          <div style="width: 120px;">
+            <el-tag type="success">{{store.data.length}}</el-tag>
+            <el-divider direction="vertical"></el-divider>
+            <el-tag type="success">2000</el-tag>
+          </div>
+          <div style="flex:1;display: flex;align-items: center;justify-content: flex-end;">
+            <el-tag round type="primary" style="margin-right: 15px;">{{ store.status }}</el-tag>
+            <el-button :icon="Service" round type="primary" @click="handleConnect">Start</el-button>
+            <el-button :icon="SwitchButton" round type="danger" @click="handleClose">Stop</el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -151,8 +135,8 @@ const handleClose = () => {
 .function-area {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  width: 280px;
+  justify-content: space-around;
+  width: 400px;
   height: 100%;
 }
 

@@ -84,9 +84,6 @@ const updateConfig = (FormEl) => {
       store.setItem(res.data)
       showMessage('success', '设置更新成功')
     }).catch((err) => {
-      console.log('--------------------------')
-      console.log(err)
-      console.log('--------------------------')
       showMessage('error', '设置更新失败:' + err)
     })
   })
@@ -127,17 +124,17 @@ const updateConfig = (FormEl) => {
           <el-input-number v-model="form.timeout" :precision="2" :step="0.1" :max="10"/>
         </el-form-item>
 
-        <el-form-item label="软流控" prop="xonxoff">
-          <el-switch v-model="form.xonxoff"/>
-        </el-form-item>
+<!--        <el-form-item label="软流控" prop="xonxoff">-->
+<!--          <el-switch v-model="form.xonxoff"/>-->
+<!--        </el-form-item>-->
 
-        <el-form-item label="硬RTS" prop="rtscts">
-          <el-switch v-model="form.rtscts"/>
-        </el-form-item>
+<!--        <el-form-item label="硬RTS" prop="rtscts">-->
+<!--          <el-switch v-model="form.rtscts"/>-->
+<!--        </el-form-item>-->
 
-        <el-form-item label="硬DTR" prop="dsrdtr">
-          <el-switch v-model="form.dsrdtr"/>
-        </el-form-item>
+<!--        <el-form-item label="硬DTR" prop="dsrdtr">-->
+<!--          <el-switch v-model="form.dsrdtr"/>-->
+<!--        </el-form-item>-->
 
         <el-form-item>
           <el-button type="primary" round style="width: 100%" size="large" @click="updateConfig(formRef)">保存设置

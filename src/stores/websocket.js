@@ -12,6 +12,10 @@ export const useWebSocketStore = defineStore('websocketStore', {
     },
     actions: {
         setData(data) {
+            if(this.sendData.length > 2000) {
+                this.data = []
+                showMessage('warning', '页面已达2000条设置上限，清空之前数据，但是您可以在历史数据中查看之前的数据')
+            }
             this.data.push(data)
         },
         connect(url) {
