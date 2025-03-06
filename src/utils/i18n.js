@@ -7,9 +7,9 @@ const messages = {
 }
 
 const i18n = createI18n({
-    messages,
+    messages:{},
     locale: 'en',
-    fallbackLng: 'en',
+    fallbackLocale: 'en',
 })
 
 export async function loadLanguageAsync(language) {
@@ -18,6 +18,7 @@ export async function loadLanguageAsync(language) {
     return language
 }
 
+// 设置默认语言
 loadLanguageAsync('en').then(() => {
     i18n.global.locale = 'en';
 })

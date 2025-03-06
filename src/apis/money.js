@@ -8,3 +8,13 @@ export function get_money_pages(skip, limit) {
         }
     )
 }
+
+export function search_money(data) {
+    return axios(
+        {
+            method: 'post',
+            url: '/money/search',
+            data
+        }
+    )
+}
