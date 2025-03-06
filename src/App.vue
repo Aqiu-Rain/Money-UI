@@ -1,9 +1,8 @@
 <script setup>
-import {onMounted} from 'vue';
 import {useRouter} from "vue-router";
 
 import Logo from "@/assets/image/logo.png"
-import {Setting, Sunny, Money, CloseBold, SemiSelect, DCaret} from "@element-plus/icons-vue";
+import {Setting, Sunny, Money, Location} from "@element-plus/icons-vue";
 
 const router = useRouter();
 
@@ -17,17 +16,6 @@ const goTo = (path) => {
 <template>
   <div class="main">
     <div class="aside">
-            <!-- <div class="base-function">
-              <div class="base-function-item red">
-                <el-icon :size="10"><CloseBold/></el-icon>
-              </div>
-              <div class="base-function-item orange">
-                <el-icon :size="10"><SemiSelect/></el-icon>
-              </div>
-              <div class="base-function-item green trans145">
-                <el-icon :size="10"><DCaret/></el-icon>
-              </div>
-            </div> -->
       <div class="logo">
         <el-image :src="Logo" style="width: 50px;height: 50px;border-radius: 50%;"></el-image>
       </div>
@@ -54,15 +42,22 @@ const goTo = (path) => {
             </el-icon>
           </div>
         </div>
-        <div class="setting-container active" @click="goTo('/setting')" v-if="router.currentRoute.value.path === '/setting'">
+        <div>
+          <div class="setting-container">
+            <el-icon :size="30">
+              <Location/>
+            </el-icon>
+          </div>
+          <div class="setting-container" @click="goTo('/setting')" v-if="router.currentRoute.value.path === '/setting'">
           <el-icon :size="30">
             <Setting/>
           </el-icon>
         </div>
-        <div class="setting-container" @click="goTo('/setting')" v-else>
-          <el-icon :size="30">
-            <Setting/>
-          </el-icon>
+          <div class="setting-container" @click="goTo('/setting')" v-else>
+            <el-icon :size="30">
+              <Setting/>
+            </el-icon>
+          </div>
         </div>
       </div>
     </div>
@@ -144,7 +139,6 @@ const goTo = (path) => {
   align-items: center;
   justify-content: space-between;
 }
-
 
 .body {
   width:100%;
