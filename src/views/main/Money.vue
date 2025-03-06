@@ -10,6 +10,8 @@ const currentPage = ref(1);
 const limit = ref(20);
 const count = ref(0);
 const currentPageData = ref([])
+const searchDialog = ref(false)
+const searchResult = ref([])
 
 onMounted(() => {
   get_money_pages(0, limit.value).then(res => {
@@ -74,7 +76,7 @@ const handlePageChange = (page) => {
 <!--              </el-select>-->
             </template>
             <template #append>
-              <el-button :icon="Search" />
+              <el-button :icon="Search" @click="searchDialog = true;" />
             </template>
           </el-input>
         </div>
@@ -119,6 +121,29 @@ const handlePageChange = (page) => {
       />
     </div>
   </div>
+
+  <el-dialog v-model="searchDialog" title="Search Result" width="90%">
+    <div>
+      <el-table :data="searchResult" border style="width: 100%" :height="500">
+        <el-table-column prop="calc_time" label="日期时间" width="180" fixed="left" align="center"/>
+        <el-table-column prop="tf_flag" label="真伪标志" width="90" fixed="left" align="center"/>
+        <el-table-column prop="valuta" label="币值" width="120" fixed="left" align="center"/>
+        <el-table-column prop="fsn_count" label="纸币计数" width="90" align="center"/>
+        <el-table-column prop="char_num" label="冠字号码字符数" width="130" align="center"/>
+        <el-table-column prop="sno" label="冠字号码" width="120" align="center"/>
+        <el-table-column prop="machine_sno" label="机具编号" width="120" align="center"/>
+        <el-table-column prop="reserve1" label="保留字" width="70" align="center"/>
+        <el-table-column prop="date" label="读取日期" width="120" align="center"/>
+        <el-table-column prop="time" label="读取时间" width="100" align="center"/>
+        <el-table-column prop="create_at" label="数据入库时间" width="250" align="center"/>
+        <el-table-column fixed="right" prop="image_data" label="冠字号码图像" width="160" align="center">
+          <template #default="scope">
+            <img :src="'data:image/bmp;base64,' + scope.row.image_data" alt="冠字号码图像">
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+  </el-dialog>
 
 </template>
 
