@@ -22,7 +22,7 @@ onMounted(() => {
   })
 })
 
-const url = "ws://127.0.0.1:8000/ws";
+const url = "ws://192.168.3.25:8000/ws";
 
 const handleConnect = () => {
   store.connect(url)
@@ -62,7 +62,7 @@ const handleClose = () => {
           <div style="width: 120px;">
             <el-tag type="success">{{store.data.length}}</el-tag>
             <el-divider direction="vertical"></el-divider>
-            <el-tag type="success">2000</el-tag>
+            <el-tag type="success">500</el-tag>
           </div>
           <div style="flex:1;display: flex;align-items: center;justify-content: flex-end;">
             <el-tag round type="primary" style="margin-right: 15px;">{{ store.status }}</el-tag>
@@ -80,7 +80,7 @@ const handleClose = () => {
         <el-table-column prop="valuta" label="币值" width="120" align="center"/>
         <el-table-column prop="fsn_count" label="纸币计数" width="100" align="center"/>
         <el-table-column prop="char_num" label="冠字号码字符数" width="130" align="center"/>
-        <el-table-column prop="sno" label="冠字号码" width="120" align="center"/>
+        <el-table-column prop="sno" label="冠字号码" width="140" align="center"/>
         <el-table-column prop="machine_sno" label="机具编号" width="120" align="center"/>
         <el-table-column prop="reserve1" label="保留字" align="center"/>
         <el-table-column fixed="right" prop="image_data" label="冠字号码图像" align="center">

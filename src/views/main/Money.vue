@@ -1,6 +1,6 @@
 <script setup>
 import {ref, onMounted, computed, nextTick} from "vue";
-import {Search, Delete} from "@element-plus/icons-vue";
+import {Search} from "@element-plus/icons-vue";
 import {get_money_pages, search_money} from "@/apis/money.js";
 import {showMessage} from "@/utils/message.js";
 
@@ -9,7 +9,8 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 const searchText = ref('')
-const daterange = ref([])
+const start = ref('')
+const end = ref('')
 const currentPage = ref(1);
 const limit = ref(20);
 const count = ref(0);
@@ -22,6 +23,8 @@ const isSearching = ref(false)
 const searchCurrentPage = ref(1)
 const searchPageSize = ref(20)
 const pdfTable = ref(null);
+const excel_exporting = ref(false);
+const pdf_exporting = ref(false);
 
 onMounted(() => {
   get_money_pages(0, limit.value).then(res => {
@@ -61,6 +64,11 @@ const handleSearchPageChange = (page) => {
 };
 
 const handleSearch = () => {
+  let range = []
+  if (start.value !== '' && end.value !== '') {
+    range = [start.value, end.value]
+  }
+
   if (searchText.value.trim().length === 0) {
     showMessage('warning', 'Please enter some words');
   } else {
@@ -69,7 +77,7 @@ const handleSearch = () => {
 
     let data = {
       q: searchText.value.trim(),
-      date_range: daterange.value
+      date_range: range
     }
 
     search_money(data).then(res => {
@@ -135,7 +143,6 @@ const handleExportPDF = async () => {
   }
 };
 
-
 </script>
 
 
@@ -155,13 +162,18 @@ const handleExportPDF = async () => {
           >
             <template #prepend>
               <el-date-picker
-                  v-model="daterange"
-                  type="daterange"
-                  range-separator="To"
+                  v-model="start"
+                  type="date"
                   size="small"
-                  start-placeholder="Start"
-                  end-placeholder="End"
-                  style="width: 190px;margin:0;"
+                  placeholder="Start"
+                  style="width: 110px;margin:0;"
+              />
+              <el-date-picker
+                  v-model="end"
+                  type="date"
+                  size="small"
+                  placeholder="End"
+                  style="width: 110px;margin-left:8px;"
               />
             </template>
             <template #append>
@@ -173,7 +185,6 @@ const handleExportPDF = async () => {
           <div>
             <el-text type="primary" truncated :title="count">记录总数: {{ count }}</el-text>
           </div>
-          <el-button round :icon="Delete" type="danger">删除所有</el-button>
         </div>
       </div>
     </div>
@@ -215,8 +226,8 @@ const handleExportPDF = async () => {
     <div style="width: 100%">
       <div v-if="!isSearching">
         <div style="margin-bottom: 20px;">
-          <el-button type="success" @click="exportToExcel()">Export Excel</el-button>
-          <el-button type="primary" @click="handleExportPDF()">Export PDF</el-button>
+          <el-button type="success" :disabled="excel_exporting" @click="exportToExcel()">Export Excel</el-button>
+          <el-button type="primary" :disabled="pdf_exporting" @click="handleExportPDF()">Export PDF</el-button>
           <el-tag type="success" style="margin-left: 10px" size="large">{{ searchTotal }} searched items</el-tag>
         </div>
         <div>
@@ -303,8 +314,9 @@ const handleExportPDF = async () => {
 .function-area {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 400px;
+  justify-content: flex-end;
+  width: 100px;
+  max-width: 360px;
   height: 100%;
 }
 

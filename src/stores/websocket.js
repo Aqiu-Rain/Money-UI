@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {showMessage} from "@/utils/message.js";
+import {showMessage, showNotification} from "@/utils/message.js";
 
 export const useWebSocketStore = defineStore('websocketStore', {
     state() {
@@ -12,9 +12,9 @@ export const useWebSocketStore = defineStore('websocketStore', {
     },
     actions: {
         setData(data) {
-            if(this.sendData.length > 2000) {
+            if(this.data.length >= 500) {
                 this.data = []
-                showMessage('warning', '页面已达2000条设置上限，清空之前数据，但是您可以在历史数据中查看之前的数据')
+                showMessage('warning', '页面已达500条设置上限，清空之前数据，但是您可以在历史数据中查看之前的数据')
             }
             this.data.push(data)
         },
@@ -34,13 +34,19 @@ export const useWebSocketStore = defineStore('websocketStore', {
             this.socket.onerror = (e) => {
                 this.socket.close();
                 this.status = '等待链接'
-                console.log(e)
                 this.message = e
             };
             this.socket.onmessage = (e) => {
                 const parsedData = JSON.parse(e.data);
                 if(parsedData.type === "serial_data") {
                     this.setData(parsedData.data)
+                } else if (parsedData.type === "error") {
+                    showNotification(
+                        'error',
+                        parsedData.data,
+                        5000,
+                        'top-right',
+                    )
                 }
             }
         },
