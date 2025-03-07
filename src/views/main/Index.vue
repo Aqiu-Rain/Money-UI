@@ -18,7 +18,7 @@ onMounted(() => {
   get_setting().then(res => {
     settingStore.setItem(res.data);
   }).catch(err => {
-    showMessage('error', '获取设置失败')
+    showMessage('error', '获取设置失败:' + err)
   })
 })
 
@@ -66,8 +66,8 @@ const handleClose = () => {
           </div>
           <div style="flex:1;display: flex;align-items: center;justify-content: flex-end;">
             <el-tag round type="primary" style="margin-right: 15px;">{{ store.status }}</el-tag>
-            <el-button :icon="Service" round type="primary" @click="handleConnect">Start</el-button>
-            <el-button :icon="SwitchButton" round type="danger" @click="handleClose">Stop</el-button>
+            <el-button :icon="Service" round type="primary" @click="handleConnect" :disabled="store.socket !== null">Start</el-button>
+            <el-button :icon="SwitchButton" round type="danger" @click="handleClose" :disabled="store.socket === null">Stop</el-button>
           </div>
         </div>
       </div>

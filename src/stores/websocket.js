@@ -32,28 +32,76 @@ export const useWebSocketStore = defineStore('websocketStore', {
                 }
             };
             this.socket.onerror = (e) => {
-                this.socket.close();
-                this.status = '等待链接'
-                this.message = e
+                showNotification(
+                    'error',
+                    e,
+                    5000,
+                    'top-right',
+                )
+                try {
+                    this.socket.close();
+                    this.status = '等待链接'
+                    this.message = e
+                    this.socket = null
+                } catch (e) {
+                    this.status = '等待链接'
+                    this.message = e
+                    this.socket = null
+                } finally {
+                    this.status = '等待链接'
+                    this.socket = null
+                }
             };
             this.socket.onmessage = (e) => {
                 const parsedData = JSON.parse(e.data);
                 if(parsedData.type === "serial_data") {
                     this.setData(parsedData.data)
-                } else if (parsedData.type === "error") {
+                } else if (parsedData.type === "notification") {
                     showNotification(
                         'error',
                         parsedData.data,
                         5000,
                         'top-right',
                     )
+                }else if(parsedData.type === "error") {
+                    showNotification(
+                        'error',
+                        parsedData.data,
+                        5000,
+                        'top-right',
+                    )
+                    try {
+                        this.socket.close()
+                        this.socket = null
+                        this.status = '等待链接'
+                    } catch(e) {
+                        this.socket = null
+                        this.status = '等待链接'
+                    } finally {
+                        this.socket = null
+                        this.status = '等待链接'
+                    }
                 }
             }
         },
         disconnect() {
-            this.socket.close()
-            this.status = '等待链接'
-            this.socket = null
+            try {
+                this.socket.close()
+                this.status = '等待链接'
+                this.socket = null
+            } catch(e) {
+                showNotification(
+                    'error',
+                    'Disconnect error:' + e,
+                    5000,
+                    'top-right',
+                )
+                this.status = '等待链接'
+                this.socket = null
+            } finally {
+                this.socket = null
+                this.status = '等待链接'
+            }
         },
         sendData(data) {
             this.socket.send(JSON.stringify(data))
