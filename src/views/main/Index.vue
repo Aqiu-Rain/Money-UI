@@ -60,7 +60,7 @@ const handleClose = () => {
         </div>
         <div class="function-area">
           <div style="width: 120px;">
-            <el-tag type="success" round v-if="store.data.length < 400">{{store.data.length}}</el-tag>
+            <el-tag type="success" round v-if="store.data.length < 10">{{store.data.length}}</el-tag>
             <el-tag type="warning" round v-else>{{store.data.length}}</el-tag>
             <el-divider direction="vertical"></el-divider>
             <el-tag type="success" round>500</el-tag>

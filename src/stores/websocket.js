@@ -12,7 +12,7 @@ export const useWebSocketStore = defineStore('websocketStore', {
     },
     actions: {
         setData(data) {
-            if(this.data.length >= 500) {
+            if (this.data.length >= 500) {
                 this.data = []
                 showMessage('warning', '页面已达500条设置上限，清空之前数据，但是您可以在历史数据中查看之前的数据')
             }
@@ -33,9 +33,10 @@ export const useWebSocketStore = defineStore('websocketStore', {
             };
             this.socket.onerror = (e) => {
                 showNotification(
-                    'error',
+                    'Error',
                     e,
-                    5000,
+                    'error',
+                    3000,
                     'top-right',
                 )
                 try {
@@ -54,27 +55,34 @@ export const useWebSocketStore = defineStore('websocketStore', {
             };
             this.socket.onmessage = (e) => {
                 const parsedData = JSON.parse(e.data);
-                if(parsedData.type === "serial_data") {
+                console.log('======================')
+                console.log(parsedData)
+                console.log('======================')
+
+                if (parsedData.type === "serial_data") {
                     this.setData(parsedData.data)
                 } else if (parsedData.type === "notification") {
                     showNotification(
-                        'error',
+                        'Success',
                         parsedData.data,
-                        5000,
+                        'success',
+                        3000,
                         'top-right',
                     )
-                }else if(parsedData.type === "error") {
+                } else if (parsedData.type === "error") {
                     showNotification(
-                        'error',
+                        'Error',
                         parsedData.data,
-                        5000,
+                        'error',
+                        3000,
                         'top-right',
                     )
+
                     try {
                         this.socket.close()
                         this.socket = null
                         this.status = '等待链接'
-                    } catch(e) {
+                    } catch (e) {
                         this.socket = null
                         this.status = '等待链接'
                     } finally {
@@ -85,15 +93,17 @@ export const useWebSocketStore = defineStore('websocketStore', {
             }
         },
         disconnect() {
+            console.log('-------disconnect-------')
             try {
                 this.socket.close()
                 this.status = '等待链接'
                 this.socket = null
-            } catch(e) {
+            } catch (e) {
                 showNotification(
-                    'error',
+                    'Error',
                     'Disconnect error:' + e,
-                    5000,
+                    'error',
+                    3000,
                     'top-right',
                 )
                 this.status = '等待链接'
@@ -104,6 +114,8 @@ export const useWebSocketStore = defineStore('websocketStore', {
             }
         },
         sendData(data) {
+            console.log('-----send data ------')
+            console.log(data)
             this.socket.send(JSON.stringify(data))
         }
     }
