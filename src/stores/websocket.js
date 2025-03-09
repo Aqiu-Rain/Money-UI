@@ -5,7 +5,7 @@ export const useWebSocketStore = defineStore('websocketStore', {
     state() {
         return {
             data: [],
-            status: '等待链接',
+            status: 'Waiting Connect',
             message: '',
             socket: null,
         }
@@ -14,20 +14,20 @@ export const useWebSocketStore = defineStore('websocketStore', {
         setData(data) {
             if (this.data.length >= 500) {
                 this.data = []
-                showMessage('warning', '页面已达500条设置上限，清空之前数据，但是您可以在历史数据中查看之前的数据')
+                showMessage('warning', 'The page has reached the 500-entry setting limit. Previous data has been cleared, but you can view it in the history.')
             }
-            this.data.push(data)
+            this.data.unshift(data)
         },
         connect(url) {
             this.socket = new WebSocket(url);
             this.socket.onopen = () => {
                 if (this.socket.readyState === WebSocket.OPEN) {
-                    this.status = '已经连接'
+                    this.status = 'Connected'
                 }
             };
             this.socket.onclose = () => {
                 if (this.socket.readyState === WebSocket.OPEN) {
-                    this.status = '等待链接'
+                    this.status = 'Waiting Connect'
                     this.socket.close()
                 }
             };
@@ -41,24 +41,20 @@ export const useWebSocketStore = defineStore('websocketStore', {
                 )
                 try {
                     this.socket.close();
-                    this.status = '等待链接'
+                    this.status = 'Waiting Connect'
                     this.message = e
                     this.socket = null
                 } catch (e) {
-                    this.status = '等待链接'
+                    this.status = 'Waiting Connect'
                     this.message = e
                     this.socket = null
                 } finally {
-                    this.status = '等待链接'
+                    this.status = 'Waiting Connect'
                     this.socket = null
                 }
             };
             this.socket.onmessage = (e) => {
                 const parsedData = JSON.parse(e.data);
-                console.log('======================')
-                console.log(parsedData)
-                console.log('======================')
-
                 if (parsedData.type === "serial_data") {
                     this.setData(parsedData.data)
                 } else if (parsedData.type === "notification") {
@@ -81,22 +77,21 @@ export const useWebSocketStore = defineStore('websocketStore', {
                     try {
                         this.socket.close()
                         this.socket = null
-                        this.status = '等待链接'
+                        this.status = 'Waiting Connect'
                     } catch (e) {
                         this.socket = null
-                        this.status = '等待链接'
+                        this.status = 'Waiting Connect'
                     } finally {
                         this.socket = null
-                        this.status = '等待链接'
+                        this.status = 'Waiting Connect'
                     }
                 }
             }
         },
         disconnect() {
-            console.log('-------disconnect-------')
             try {
                 this.socket.close()
-                this.status = '等待链接'
+                this.status = 'Waiting Connect'
                 this.socket = null
             } catch (e) {
                 showNotification(
@@ -106,16 +101,14 @@ export const useWebSocketStore = defineStore('websocketStore', {
                     3000,
                     'top-right',
                 )
-                this.status = '等待链接'
+                this.status = 'Waiting Connect'
                 this.socket = null
             } finally {
                 this.socket = null
-                this.status = '等待链接'
+                this.status = 'Waiting Connect'
             }
         },
         sendData(data) {
-            console.log('-----send data ------')
-            console.log(data)
             this.socket.send(JSON.stringify(data))
         }
     }

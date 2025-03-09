@@ -5,6 +5,9 @@ import {useWebSocketStore} from "@/stores/websocket.js";
 import {showMessage} from "@/utils/message.js";
 import {get_setting} from "@/apis/settings.js";
 import {useSettingStore} from "@/stores/settings.js";
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const searchText = ref('')
 const tableHeight = computed(() => {
@@ -14,15 +17,25 @@ const tableHeight = computed(() => {
 const store = useWebSocketStore();
 const settingStore = useSettingStore();
 
+const searchedData = computed(()=> {
+  if (searchText.value === "") {
+    return store.data;
+  }
+  return store.data.filter((item) => {
+    item.sno.toLowerCase().includes(searchText.value.toLowerCase())
+  })
+})
+
+
 onMounted(() => {
   get_setting().then(res => {
     settingStore.setItem(res.data);
   }).catch(err => {
-    showMessage('error', '获取设置失败:' + err)
+    showMessage('error', 'get settings failed:' + err)
   })
 })
 
-const url = "ws://192.168.3.25:8000/ws";
+const url = "ws://127.0.0.1:8000/ws";
 
 const handleConnect = () => {
   store.connect(url)
@@ -35,7 +48,7 @@ const handleConnect = () => {
       }
       store.sendData(data)
     }
-  }, 1000)
+  }, 1500)
 }
 
 const handleClose = () => {
@@ -48,7 +61,7 @@ const handleClose = () => {
   <div class="container">
     <div class="header">
       <div class="header-left">
-        <h3 style="font-family: 幼圆,serif">点钞记录系统</h3>
+        <h3 style="font-family: 幼圆,serif">{{$t('message.name')}}</h3>
       </div>
       <div class="header-right">
         <div class="search-container">
@@ -60,33 +73,35 @@ const handleClose = () => {
         </div>
         <div class="function-area">
           <div style="width: 120px;">
-            <el-tag type="success" round v-if="store.data.length < 10">{{store.data.length}}</el-tag>
+            <el-tag type="success" round v-if="store.data.length < 400">{{store.data.length}}</el-tag>
             <el-tag type="warning" round v-else>{{store.data.length}}</el-tag>
             <el-divider direction="vertical"></el-divider>
             <el-tag type="success" round>500</el-tag>
           </div>
           <div style="flex:1;display: flex;align-items: center;justify-content: flex-end;">
             <el-tag round type="primary" style="margin-right: 15px;">{{ store.status }}</el-tag>
-            <el-button :icon="Service" round type="primary" @click="handleConnect" :disabled="store.socket !== null">Start</el-button>
-            <el-button :icon="SwitchButton" round type="danger" @click="handleClose" :disabled="store.socket === null">Stop</el-button>
+            <el-button :icon="Service" round type="primary" @click="handleConnect" :disabled="store.socket !== null">
+              {{$t('message.start')}}
+            </el-button>
+            <el-button :icon="SwitchButton" round type="danger" @click="handleClose" :disabled="store.socket === null">
+              {{$t('message.stop')}}
+            </el-button>
           </div>
         </div>
       </div>
     </div>
     <div class="content">
-      <el-table :data="store.data" :height="tableHeight" border style="width: 100%">
-        <el-table-column prop="date" label="日期" width="150" fixed="left" align="center"/>
-        <el-table-column prop="time" label="时间" width="120" fixed="left" align="center"/>
-        <el-table-column prop="tf_flag" label="真伪标志" width="120" fixed="left" align="center"/>
-        <el-table-column prop="valuta" label="币值" width="120" align="center"/>
-        <el-table-column prop="fsn_count" label="纸币计数" width="100" align="center"/>
-        <el-table-column prop="char_num" label="冠字号码字符数" width="130" align="center"/>
-        <el-table-column prop="sno" label="冠字号码" width="140" align="center"/>
-        <el-table-column prop="machine_sno" label="机具编号" width="120" align="center"/>
-        <el-table-column prop="reserve1" label="保留字" align="center"/>
-        <el-table-column fixed="right" prop="image_data" label="冠字号码图像" align="center">
+      <el-table :data="searchedData" :height="tableHeight" border style="width: 100%;font-size: 18px;">
+        <el-table-column prop="create_at" :label="$t('message.datetime')" width="300" fixed="left" align="center"/>
+        <el-table-column prop="money_flag" :label="$t('message.bizhong')" width="120" fixed="left" align="center"/>
+        <el-table-column prop="valuta" :label="$t('message.bizhi')" width="120" fixed="left" align="center"/>
+        <el-table-column prop="ver" :label="$t('message.version')" width="120" fixed="left" align="center"/>
+        <el-table-column prop="tf_flag" :label="$t('message.code')" width="120" fixed="left" align="center"/>
+        <el-table-column prop="machine_sno" :label="$t('message.machine_num')" width="130" align="center"/>
+        <el-table-column prop="sno" :label="$t('message.mno')" width="180" align="center"/>
+        <el-table-column fixed="right" prop="image_data" :label="$t('message.mnoImg')" width="300" align="center">
           <template #default="scope">
-            <img :src="'data:image/bmp;base64,' + scope.row.image_data" alt="冠字号码图像">
+            <img :src="'data:image/bmp;base64,' + scope.row.image_data" alt="冠字号码图像" style="height: 40px;">
           </template>
         </el-table-column>
       </el-table>
@@ -113,7 +128,7 @@ const handleClose = () => {
 
 .header-left {
   height: 100%;
-  width: 140px;
+  width: 180px;
   display: flex;
   align-items: center;
 }

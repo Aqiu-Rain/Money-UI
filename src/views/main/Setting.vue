@@ -95,32 +95,32 @@ const updateConfig = (FormEl) => {
   <div class="container">
     <div class="setting-box">
       <el-form :model="form" label-width="100" ref="formRef" :rules="rules" style="width: 100%;">
-        <el-form-item label="端口号" prop="port">
-          <el-select v-model="form.port" placeholder="请选择端口">
+        <el-form-item :label="$t('message.port')" prop="port">
+          <el-select v-model="form.port" placeholder="">
             <el-option v-for="item in Ports" :label="item.Desc" :value="item.Port" :key="item.Port"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="波特率" prop="baudrate">
-          <el-select v-model="form.baudrate" placeholder="请选择波特率">
+        <el-form-item :label="$t('message.btl')" prop="baudrate">
+          <el-select v-model="form.baudrate" placeholder="">
             <el-option v-for="item in boteRates" :label="item" :value="item" :key="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="数据位" prop="bytesize">
-          <el-select v-model="form.bytesize" placeholder="请选择数据位">
+        <el-form-item :label="$t('message.sjw')" prop="bytesize">
+          <el-select v-model="form.bytesize" placeholder="">
             <el-option v-for="item in ByteSize" :label="item" :value="item" :key="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="校验位" prop="parity">
-          <el-select v-model="form.parity" placeholder="请选择校验位">
+        <el-form-item :label="$t('message.jyw')" prop="parity">
+          <el-select v-model="form.parity" placeholder="">
             <el-option v-for="item in Parity" :label="item" :value="item" :key="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="停止位" prop="stopbits">
-          <el-select v-model="form.stopbits" placeholder="请选择停止位">
+        <el-form-item :label="$t('message.tzw')" prop="stopbits">
+          <el-select v-model="form.stopbits" placeholder="">
             <el-option v-for="item in StopBits" :label="item" :value="item" :key="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="超时值" prop="timeout">
+        <el-form-item :label="$t('message.csz')" prop="timeout">
           <el-input-number v-model="form.timeout" :precision="2" :step="0.1" :max="10"/>
         </el-form-item>
 
@@ -137,7 +137,8 @@ const updateConfig = (FormEl) => {
 <!--        </el-form-item>-->
 
         <el-form-item>
-          <el-button type="primary" round style="width: 100%" size="large" @click="updateConfig(formRef)">保存设置
+          <el-button type="primary" round style="width: 100%" size="large" @click="updateConfig(formRef)">
+            {{$t('message.save_setting')}}
           </el-button>
         </el-form-item>
 

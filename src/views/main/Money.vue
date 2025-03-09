@@ -4,6 +4,10 @@ import {Search} from "@element-plus/icons-vue";
 import {get_money_pages, search_money} from "@/apis/money.js";
 import {showMessage} from "@/utils/message.js";
 
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -12,7 +16,7 @@ const searchText = ref('')
 const start = ref('')
 const end = ref('')
 const currentPage = ref(1);
-const limit = ref(20);
+const limit = ref(100);
 const count = ref(0);
 const currentPageData = ref([])
 const searchTotal = ref(0)
@@ -31,7 +35,7 @@ onMounted(() => {
     currentPageData.value = res.data.data;
     count.value = res.data.total;
   }).catch(err => {
-    showMessage('error', '获取列表失败:' + err)
+    showMessage('error', 'get data failed:' + err)
   })
 })
 
@@ -50,7 +54,7 @@ const fetchItems = (page) => {
     currentPageData.value = res.data.data;
     count.value = res.data.total;
   }).catch(err => {
-    showMessage('error', '获取列表失败:' + err)
+    showMessage('error', 'get data failed:' + err)
   })
 };
 
@@ -95,7 +99,6 @@ const exportToExcel = () => {
   const worksheet = XLSX.utils.json_to_sheet(searchResult.value);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-  // 导出 Excel 文件
   const excel_name = searchText.value.trim() + '.xlsx'
   XLSX.writeFile(workbook, excel_name);
 }
@@ -103,29 +106,22 @@ const exportToExcel = () => {
 // 导出 PDF 方法
 const handleExportPDF = async () => {
   try {
-    // 1. 确保 DOM 更新完成
     await nextTick();
-    // 2. 强制渲染表格内容
     pdfTable.value.doLayout();
     await new Promise(resolve => setTimeout(resolve, 300));
-
-    // 3. 获取实际内容容器
     const tableBody = pdfTable.value.$el.querySelector('.el-table__body');
     if (!tableBody?.isConnected) {
-      throw new Error('表格内容未正确渲染');
+      throw new Error('table content not rendered');
     }
 
-    // 4. 生成 Canvas
     const canvas = await html2canvas(tableBody, {
       scale: 2,
       useCORS: true,
       ignoreElements: (element) => {
-        // 过滤 Element Plus 的 loading 动画
         return element.classList?.contains('el-table__empty-block');
       },
     });
 
-    // 5. 生成 PDF
     const pdf = new jsPDF({
       orientation: 'p',
       unit: 'mm',
@@ -136,10 +132,9 @@ const handleExportPDF = async () => {
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, imgWidth, imgHeight);
-    pdf.save('users.pdf');
+    pdf.save('export.pdf');
   } catch (error) {
-    console.error('导出 PDF 失败:', error);
-    alert('导出失败，请确保表格已完全加载');
+    showMessage('error', 'export PDF failed:' + error.message);
   }
 };
 
@@ -150,30 +145,33 @@ const handleExportPDF = async () => {
   <div class="container">
     <div class="header">
       <div class="header-left">
-        <h3>历史记录</h3>
+        <h3>{{$t('message.history')}}</h3>
       </div>
       <div class="header-right">
         <div class="search-container">
           <el-input
               v-model="searchText"
-              placeholder="Please Input"
+              :placeholder="$t('message.search')"
               class="input-with-select"
               size="large"
+
           >
             <template #prepend>
               <el-date-picker
                   v-model="start"
-                  type="date"
+                  type="datetime"
                   size="small"
-                  placeholder="Start"
-                  style="width: 110px;margin:0;"
+                  :placeholder="$t('message.start')"
+                  style="width: 180px;margin:0;"
+                  value-format="YYYY-MM-DD HH:mm:ss"
               />
               <el-date-picker
                   v-model="end"
-                  type="date"
+                  type="datetime"
                   size="small"
-                  placeholder="End"
-                  style="width: 110px;margin-left:8px;"
+                  :placeholder="$t('message.stop')"
+                  style="width: 180px;margin-left:8px;"
+                  value-format="YYYY-MM-DD HH:mm:ss"
               />
             </template>
             <template #append>
@@ -183,27 +181,23 @@ const handleExportPDF = async () => {
         </div>
         <div class="function-area">
           <div>
-            <el-text type="primary" truncated :title="count">记录总数: {{ count }}</el-text>
+            <el-text type="primary" truncated :title="count">{{$t('message.record_count')}}: {{ count }}</el-text>
           </div>
         </div>
       </div>
     </div>
     <div class="content">
-      <el-table :data="currentPageData" border style="width: 100%" :height="tableHeight">
-        <el-table-column prop="calc_time" label="日期时间" width="180" fixed="left" align="center"/>
-        <el-table-column prop="tf_flag" label="真伪标志" width="90" fixed="left" align="center"/>
-        <el-table-column prop="valuta" label="币值" width="120" fixed="left" align="center"/>
-        <el-table-column prop="fsn_count" label="纸币计数" width="90" align="center"/>
-        <el-table-column prop="char_num" label="冠字号码字符数" width="130" align="center"/>
-        <el-table-column prop="sno" label="冠字号码" width="120" align="center"/>
-        <el-table-column prop="machine_sno" label="机具编号" width="120" align="center"/>
-        <el-table-column prop="reserve1" label="保留字" width="70" align="center"/>
-        <el-table-column prop="date" label="读取日期" width="120" align="center"/>
-        <el-table-column prop="time" label="读取时间" width="100" align="center"/>
-        <el-table-column prop="create_at" label="数据入库时间" width="250" align="center"/>
-        <el-table-column fixed="right" prop="image_data" label="冠字号码图像" width="160" align="center">
+      <el-table :data="currentPageData" border style="width: 100%;font-size:18px;" :height="tableHeight">
+        <el-table-column prop="create_at" :label="$t('message.datetime')" width="300" fixed="left" align="center"/>
+        <el-table-column prop="money_flag" :label="$t('message.bizhong')" width="120" fixed="left" align="center"/>
+        <el-table-column prop="valuta" :label="$t('message.bizhi')" width="120" fixed="left" align="center"/>
+        <el-table-column prop="ver" :label="$t('message.version')" width="120" fixed="left" align="center"/>
+        <el-table-column prop="tf_flag" :label="$t('message.code')" width="120" fixed="left" align="center"/>
+        <el-table-column prop="machine_sno" :label="$t('message.machine_num')" width="130" align="center"/>
+        <el-table-column prop="sno" :label="$t('message.mno')" width="180" align="center"/>
+        <el-table-column fixed="right" prop="image_data" :label="$t('message.mnoImg')" width="300" align="center">
           <template #default="scope">
-            <img :src="'data:image/bmp;base64,' + scope.row.image_data" alt="冠字号码图像">
+            <img :src="'data:image/bmp;base64,' + scope.row.image_data" alt="冠字号码图像" style="height: 40px;">
           </template>
         </el-table-column>
       </el-table>
@@ -213,8 +207,8 @@ const handleExportPDF = async () => {
           background
           layout="prev, pager, next"
           :total="count"
-          prev-text="上一页"
-          next-text="下一页"
+          prev-text="<<"
+          next-text=">>"
           :current-page="currentPage"
           :page-size="limit"
           @current-change="handlePageChange"
@@ -222,7 +216,7 @@ const handleExportPDF = async () => {
     </div>
   </div>
 
-  <el-dialog v-model="searchDialog" title="Search Result" width="90%">
+  <el-dialog v-model="searchDialog" title="" width="90%">
     <div style="width: 100%">
       <div v-if="!isSearching">
         <div style="margin-bottom: 20px;">
@@ -232,21 +226,16 @@ const handleExportPDF = async () => {
         </div>
         <div>
           <el-table :data="searchPageItems" border ref="pdfTable" style="width: 100%" :height="400">
-            <el-table-column prop="id" label="ID" width="180" fixed="left" align="center"/>
-            <el-table-column prop="calc_time" label="日期时间" width="180" fixed="left" align="center"/>
-            <el-table-column prop="tf_flag" label="真伪标志" width="90" fixed="left" align="center"/>
-            <el-table-column prop="valuta" label="币值" width="120" fixed="left" align="center"/>
-            <el-table-column prop="fsn_count" label="纸币计数" width="90" align="center"/>
-            <el-table-column prop="char_num" label="冠字号码字符数" width="130" align="center"/>
-            <el-table-column prop="sno" label="冠字号码" align="center"/>
-            <el-table-column prop="machine_sno" label="机具编号" width="120" align="center"/>
-            <el-table-column prop="reserve1" label="保留字" width="70" align="center"/>
-            <el-table-column prop="date" label="读取日期" width="120" align="center"/>
-            <el-table-column prop="time" label="读取时间" width="100" align="center"/>
-            <el-table-column prop="create_at" label="数据入库时间" width="250" align="center"/>
-            <el-table-column fixed="right" prop="image_data" label="冠字号码图像" width="160" align="center">
+            <el-table-column prop="create_at" :label="$t('message.datetime')" width="300" fixed="left" align="center"/>
+            <el-table-column prop="money_flag" :label="$t('message.bizhong')" width="120" fixed="left" align="center"/>
+            <el-table-column prop="valuta" :label="$t('message.bizhi')" width="120" fixed="left" align="center"/>
+            <el-table-column prop="ver" :label="$t('message.version')" width="120" fixed="left" align="center"/>
+            <el-table-column prop="tf_flag" :label="$t('message.code')" width="120" fixed="left" align="center"/>
+            <el-table-column prop="machine_sno" :label="$t('message.machine_num')" width="130" align="center"/>
+            <el-table-column prop="sno" :label="$t('message.mno')" width="180" align="center"/>
+            <el-table-column fixed="right" prop="image_data" :label="$t('message.mnoImg')" width="300" align="center">
               <template #default="scope">
-                <img :src="'data:image/bmp;base64,' + scope.row.image_data" alt="冠字号码图像">
+                <img :src="'data:image/bmp;base64,' + scope.row.image_data" alt="冠字号码图像" style="height: 40px;">
               </template>
             </el-table-column>
           </el-table>
@@ -258,8 +247,8 @@ const handleExportPDF = async () => {
               :total="searchTotal"
               background
               layout="prev, pager, next"
-              prev-text="上一页"
-              next-text="下一页"
+              prev-text="<<"
+              next-text=">>"
               :current-page="searchCurrentPage"
           />
         </div>
@@ -315,8 +304,7 @@ const handleExportPDF = async () => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 100px;
-  max-width: 360px;
+  width: 200px;
   height: 100%;
 }
 

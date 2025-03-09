@@ -1,42 +1,37 @@
 <script setup>
-import {ref} from 'vue'
-import {useRouter} from "vue-router";
-import {useI18n} from "vue-i18n";
-import {loadLanguageAsync} from "@/utils/i18n.js";
+import { ref, watch } from 'vue'
+import { useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
 import Logo from "@/assets/image/logo.png"
-import {Setting, Sunny, Money, Location} from "@element-plus/icons-vue";
+import { Setting, Sunny, Money, Location } from "@element-plus/icons-vue"
 
 const languages = [
-  {'key': 'English', 'value': 'en'},
-  {'key': '中文[简]', 'value': 'zh'},
-  {'key': '中文[繁]', 'value': 'zh_td'}
+  { 'key': 'English', 'value': 'en' },
+  { 'key': '中文[简]', 'value': 'zh' },
+  { 'key': '中文[繁]', 'value': 'zh_TW' }
 ]
-const router = useRouter();
-const i18n = useI18n();
-const lang_select = ref('en')
 
-const changeLanguage = async (lang) => {
-  await loadLanguageAsync(lang);
-  i18n.value = lang;
-}
+const router = useRouter()
+const { locale } = useI18n()
+const selectedLocale = ref(locale.value)
 
-
-const handleLanguageChange = (lang) => {
-  changeLanguage(lang);
-}
+// 新增监听器
+watch(selectedLocale, (newVal) => {
+  locale.value = newVal // 关键：同步到 i18n
+  // 可选：存储到 localStorage 实现持久化
+  localStorage.setItem('locale', newVal)
+})
 
 const goTo = (path) => {
-  router.push(path);
+  router.push(path)
 }
-
-
 </script>
 
 <template>
   <div class="main">
     <div class="aside">
       <div class="logo">
-        <el-image :src="Logo" style="width: 50px;height: 50px;border-radius: 50%;"></el-image>
+        <el-image :src="Logo" style="width: 50px;height: 50px;border-radius: 10px;"></el-image>
       </div>
       <div class="menu">
         <div class="menu-items">
@@ -65,7 +60,7 @@ const goTo = (path) => {
           <div class="language-container">
             <el-popover
                 placement="right"
-                title="Choose your language"
+                :title="$t('message.language')"
                 :width="330"
                 trigger="click"
             >
@@ -76,11 +71,10 @@ const goTo = (path) => {
               </template>
               <template #default>
                 <el-select
-                    v-model="lang_select"
+                    v-model="selectedLocale"
                     placeholder="Select Language"
                     size="large"
                     style="width: 300px"
-                    @change="handleLanguageChange"
                 >
                   <el-option
                       v-for="item in languages"
@@ -93,7 +87,7 @@ const goTo = (path) => {
             </el-popover>
 
           </div>
-          <div class="setting-container" @click="goTo('/setting')" v-if="router.currentRoute.value.path === '/setting'">
+          <div class="setting-container active" @click="goTo('/setting')" v-if="router.currentRoute.value.path === '/setting'">
             <el-icon :size="30">
               <Setting/>
             </el-icon>
