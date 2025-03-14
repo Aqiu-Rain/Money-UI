@@ -13,7 +13,7 @@ export const useWebSocketStore = defineStore('websocketStore', {
     },
     actions: {
         setData(data) {
-            if (this.data.length >= 50) {
+            if (this.data.length >= 60) {
                 this.data = []
                 // showMessage('warning', 'The page has reached the 50-entry setting limit. Previous data has been cleared, but you can view it in the history.')
             }
@@ -24,14 +24,11 @@ export const useWebSocketStore = defineStore('websocketStore', {
             this.socket.onopen = () => {
                 if (this.socket.readyState === WebSocket.OPEN) {
                     this.status = 'Connected'
-                    console.log('Websocket Connected----------')
-                    // this.sendHeartbeat()
-                    console.log('Websocket Connected---------3333-')
+                    this.sendHeartbeat()
                 }
             };
             this.socket.onclose = () => {
-                console.log('Websocket Disconnected')
-                // clearInterval(this.interval)
+                clearInterval(this.interval)
                 if (this.socket.readyState === WebSocket.CLOSED) {
                     this.status = 'Waiting Connect'
                     this.socket.close()
@@ -51,10 +48,6 @@ export const useWebSocketStore = defineStore('websocketStore', {
             };
             this.socket.onmessage = (e) => {
                 const parsedData = JSON.parse(e.data);
-                console.log('----------receive data----------')
-                console.log(parsedData)
-                console.log('--------------------')
-
                 if (parsedData.type === "serial_data") {
                     this.setData(parsedData.data)
                 } else if (parsedData.type === "notification") {
@@ -64,7 +57,6 @@ export const useWebSocketStore = defineStore('websocketStore', {
                     this.socket = null
                     showNotification('Error', parsedData.data, 'error', 10000, 'top-right')
                 } else if (parsedData.type === "heart") {
-                    console.log('Received heart: ' + parsedData.data)
                 } else if (parsedData.type === "warning") {
                     showNotification('Warning', parsedData.data, 'warning', 3000, 'top-right')
                 }
@@ -74,20 +66,15 @@ export const useWebSocketStore = defineStore('websocketStore', {
             this.socket.close();
             this.status = 'Waiting Connect'
             this.socket = null
-            // clearInterval(this.interval)
+            clearInterval(this.interval)
         },
         sendData(data) {
-            console.log('--------sendData:-------')
-            console.log(data)
-            console.log('---------------')
-            console.log(this.socket)
             this.socket.send(JSON.stringify(data))
         },
-        // sendHeartbeat() {
-        //     this.interval = setInterval(() => {
-        //         console.log('Send heartbeat')
-        //         this.socket.send(JSON.stringify({cmd:'heart', param:{}}))
-        //     }, 5000)
-        // }
+        sendHeartbeat() {
+            this.interval = setInterval(() => {
+                this.socket.send(JSON.stringify({cmd:'heart', param:{}}))
+            }, 60000)
+        }
     }
 })
