@@ -35,10 +35,15 @@ export const useWebSocketStore = defineStore('websocketStore', {
                 }
             };
             this.socket.onerror = (e) => {
-                showNotification('Error', e, 'error', 3000, 'top-right')
-                this.socket.close()
-                this.status = 'Waiting Connect'
-                this.socket = null
+                console.error('WebSocket Error:', e);
+                if (this.socket.readyState === WebSocket.CLOSED) {
+                    this.socket.close()
+                    this.status = 'Waiting Connect'
+                    this.socket = null
+                    showNotification('Error', 'Websocket connect failed.', 'error', 3000, 'top-right')
+                } else {
+                    showNotification('Error', e, 'error', 3000, 'top-right')
+                }
             };
             this.socket.onmessage = (e) => {
                 const parsedData = JSON.parse(e.data);
