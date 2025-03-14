@@ -41,6 +41,9 @@ const handleConnect = () => {
   store.connect(url)
 
   setTimeout(() => {
+    console.log("=========ttt==========")
+    console.log(store.socket.readyState )
+    console.log("=========ttt==========")
     if (store.socket.readyState === WebSocket.OPEN) {
       let data = {
         cmd: 'start',
@@ -48,7 +51,7 @@ const handleConnect = () => {
       }
       store.sendData(data)
     }
-  }, 1500)
+  }, 2000)
 }
 
 const handleClose = () => {
