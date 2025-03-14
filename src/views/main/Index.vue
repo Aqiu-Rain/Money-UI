@@ -21,8 +21,13 @@ const searchedData = computed(()=> {
   if (searchText.value === "") {
     return store.data;
   }
+
+  // return store.data.filter((item) => {
+  //   item.sno.includes(searchText.value)
+  // })
+
   return store.data.filter((item) => {
-    item.mno.toLowerCase().includes(searchText.value.toLowerCase())
+    return item.includes(searchText.value);
   })
 })
 
