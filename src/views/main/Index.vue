@@ -22,7 +22,7 @@ const searchedData = computed(()=> {
     return store.data;
   }
   return store.data.filter((item) => {
-    item.sno.toLowerCase().includes(searchText.value.toLowerCase())
+    item.mno.toLowerCase().includes(searchText.value.toLowerCase())
   })
 })
 
