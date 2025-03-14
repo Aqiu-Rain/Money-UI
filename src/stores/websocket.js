@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {showMessage, showNotification} from "@/utils/message.js";
+import {showNotification} from "@/utils/message.js";
 
 export const useWebSocketStore = defineStore('websocketStore', {
     state() {
@@ -8,12 +8,13 @@ export const useWebSocketStore = defineStore('websocketStore', {
             status: 'Waiting Connect',
             message: '',
             socket: null,
-            interval: null
+            interval: null,
+            count: 0
         }
     },
     actions: {
         setData(data) {
-            if (this.data.length >= 60) {
+            if (this.data.length >= 15) {
                 this.data = []
                 // showMessage('warning', 'The page has reached the 50-entry setting limit. Previous data has been cleared, but you can view it in the history.')
             }
@@ -50,6 +51,7 @@ export const useWebSocketStore = defineStore('websocketStore', {
                 const parsedData = JSON.parse(e.data);
                 if (parsedData.type === "serial_data") {
                     this.setData(parsedData.data)
+                    this.count += 1
                 } else if (parsedData.type === "notification") {
                     showNotification('Success', parsedData.data, 'success', 3000, 'top-right')
                 } else if (parsedData.type === "error") {

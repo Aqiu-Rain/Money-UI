@@ -41,9 +41,6 @@ const handleConnect = () => {
   store.connect(url)
 
   setTimeout(() => {
-    console.log("=========ttt==========")
-    console.log(store.socket.readyState )
-    console.log("=========ttt==========")
     if (store.socket.readyState === WebSocket.OPEN) {
       let data = {
         cmd: 'start',
@@ -77,10 +74,11 @@ const handleClose = () => {
         </div>
         <div class="function-area">
           <div style="width: 120px;">
-            <el-tag type="success" round v-if="store.data.length < 50">{{store.data.length}}</el-tag>
-            <el-tag type="warning" round v-else>{{store.data.length}}</el-tag>
-            <el-divider direction="vertical"></el-divider>
-            <el-tag type="success" round>60</el-tag>
+                <el-tag>{{store.count}}</el-tag>
+<!--            <el-tag type="success" round v-if="store.data.length < 50">{{store.data.length}}</el-tag>-->
+<!--            <el-tag type="warning" round v-else>{{store.data.length}}</el-tag>-->
+<!--            <el-divider direction="vertical"></el-divider>-->
+<!--            <el-tag type="success" round>60</el-tag>-->
           </div>
           <div style="flex:1;display: flex;align-items: center;justify-content: flex-end;">
             <el-tag round type="primary" style="margin-right: 15px;">{{ store.status }}</el-tag>
