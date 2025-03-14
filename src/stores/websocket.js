@@ -24,7 +24,9 @@ export const useWebSocketStore = defineStore('websocketStore', {
             this.socket.onopen = () => {
                 if (this.socket.readyState === WebSocket.OPEN) {
                     this.status = 'Connected'
+                    console.log('Websocket Connected----------')
                     this.sendHeartbeat()
+                    console.log('Websocket Connected---------3333-')
                 }
             };
             this.socket.onclose = () => {
@@ -48,6 +50,9 @@ export const useWebSocketStore = defineStore('websocketStore', {
             };
             this.socket.onmessage = (e) => {
                 const parsedData = JSON.parse(e.data);
+                console.log('----------receive data----------')
+                console.log(parsedData)
+                console.log('--------------------')
 
                 if (parsedData.type === "serial_data") {
                     this.setData(parsedData.data)
@@ -71,6 +76,9 @@ export const useWebSocketStore = defineStore('websocketStore', {
             clearInterval(this.interval)
         },
         sendData(data) {
+            console.log('--------sendData:-------')
+            console.log(data)
+            console.log('---------------')
             this.socket.send(JSON.stringify(data))
         },
         sendHeartbeat() {
