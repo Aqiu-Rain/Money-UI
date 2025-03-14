@@ -30,7 +30,8 @@ export const useWebSocketStore = defineStore('websocketStore', {
                 }
             };
             this.socket.onclose = () => {
-                clearInterval(this.interval)
+                console.log('Websocket Disconnected')
+                // clearInterval(this.interval)
                 if (this.socket.readyState === WebSocket.CLOSED) {
                     this.status = 'Waiting Connect'
                     this.socket.close()
@@ -79,6 +80,7 @@ export const useWebSocketStore = defineStore('websocketStore', {
             console.log('--------sendData:-------')
             console.log(data)
             console.log('---------------')
+            console.log(this.socket)
             this.socket.send(JSON.stringify(data))
         },
         // sendHeartbeat() {
