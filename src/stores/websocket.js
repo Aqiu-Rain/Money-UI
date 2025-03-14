@@ -70,10 +70,10 @@ export const useWebSocketStore = defineStore('websocketStore', {
             }
         },
         disconnect() {
-            this.socket.disconnect();
+            this.socket.close();
             this.status = 'Waiting Connect'
             this.socket = null
-            clearInterval(this.interval)
+            // clearInterval(this.interval)
         },
         sendData(data) {
             console.log('--------sendData:-------')
