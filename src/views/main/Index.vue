@@ -54,6 +54,7 @@ const handleConnect = () => {
 const handleClose = () => {
   store.disconnect()
 }
+
 </script>
 
 

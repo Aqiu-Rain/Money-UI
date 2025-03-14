@@ -55,6 +55,7 @@ export const useWebSocketStore = defineStore('websocketStore', {
                     showNotification('Success', parsedData.data, 'success', 3000, 'top-right')
                 } else if (parsedData.type === "error") {
                     showNotification('Error', parsedData.data, 'error', 3000, 'top-right')
+
                 } else if (parsedData.type === "heart") {
                     console.log('Received heart: ' + parsedData.data)
                 }
@@ -72,7 +73,7 @@ export const useWebSocketStore = defineStore('websocketStore', {
         sendHeartbeat() {
             this.interval = setInterval(() => {
                 console.log('Send heartbeat')
-                this.socket.send(JSON.stringify({cmd:'heart'}))
+                this.socket.send(JSON.stringify({cmd:'heart', param:{}}))
             }, 5000)
         }
     }
