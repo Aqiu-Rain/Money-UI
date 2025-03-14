@@ -25,7 +25,7 @@ export const useWebSocketStore = defineStore('websocketStore', {
                 if (this.socket.readyState === WebSocket.OPEN) {
                     this.status = 'Connected'
                     console.log('Websocket Connected----------')
-                    this.sendHeartbeat()
+                    // this.sendHeartbeat()
                     console.log('Websocket Connected---------3333-')
                 }
             };
@@ -81,11 +81,11 @@ export const useWebSocketStore = defineStore('websocketStore', {
             console.log('---------------')
             this.socket.send(JSON.stringify(data))
         },
-        sendHeartbeat() {
-            this.interval = setInterval(() => {
-                console.log('Send heartbeat')
-                this.socket.send(JSON.stringify({cmd:'heart', param:{}}))
-            }, 5000)
-        }
+        // sendHeartbeat() {
+        //     this.interval = setInterval(() => {
+        //         console.log('Send heartbeat')
+        //         this.socket.send(JSON.stringify({cmd:'heart', param:{}}))
+        //     }, 5000)
+        // }
     }
 })
