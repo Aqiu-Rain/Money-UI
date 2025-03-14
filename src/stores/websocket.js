@@ -54,10 +54,13 @@ export const useWebSocketStore = defineStore('websocketStore', {
                 } else if (parsedData.type === "notification") {
                     showNotification('Success', parsedData.data, 'success', 3000, 'top-right')
                 } else if (parsedData.type === "error") {
-                    showNotification('Error', parsedData.data, 'error', 3000, 'top-right')
-
+                    this.socket.close()
+                    this.socket = null
+                    showNotification('Error', parsedData.data, 'error', 10000, 'top-right')
                 } else if (parsedData.type === "heart") {
                     console.log('Received heart: ' + parsedData.data)
+                } else if (parsedData.type === "warning") {
+                    showNotification('Warning', parsedData.data, 'warning', 3000, 'top-right')
                 }
             }
         },
