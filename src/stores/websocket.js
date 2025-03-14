@@ -32,6 +32,7 @@ export const useWebSocketStore = defineStore('websocketStore', {
                 if (this.socket.readyState === WebSocket.CLOSED) {
                     this.status = 'Waiting Connect'
                     this.socket.close()
+                    this.socket = null
                 }
             };
             this.socket.onerror = (e) => {
