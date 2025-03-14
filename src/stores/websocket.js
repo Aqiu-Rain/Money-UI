@@ -14,11 +14,12 @@ export const useWebSocketStore = defineStore('websocketStore', {
     },
     actions: {
         setData(data) {
-            if (this.data.length >= 15) {
-                this.data = []
+            if (this.count >= 15) {
+                // 删除this.data的第一个数据
+                this.data.shift()
+                this.data.unshift(data)
                 // showMessage('warning', 'The page has reached the 50-entry setting limit. Previous data has been cleared, but you can view it in the history.')
             }
-            this.data.unshift(data)
         },
         connect(url) {
             this.socket = new WebSocket(url);
