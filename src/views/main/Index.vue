@@ -73,10 +73,10 @@ const handleClose = () => {
         </div>
         <div class="function-area">
           <div style="width: 120px;">
-            <el-tag type="success" round v-if="store.data.length < 400">{{store.data.length}}</el-tag>
+            <el-tag type="success" round v-if="store.data.length < 40">{{store.data.length}}</el-tag>
             <el-tag type="warning" round v-else>{{store.data.length}}</el-tag>
             <el-divider direction="vertical"></el-divider>
-            <el-tag type="success" round>500</el-tag>
+            <el-tag type="success" round>50</el-tag>
           </div>
           <div style="flex:1;display: flex;align-items: center;justify-content: flex-end;">
             <el-tag round type="primary" style="margin-right: 15px;">{{ store.status }}</el-tag>
@@ -97,7 +97,7 @@ const handleClose = () => {
         <el-table-column prop="valuta" :label="$t('message.bizhi')" width="120" fixed="left" align="center"/>
         <el-table-column prop="ver" :label="$t('message.version')" width="120" fixed="left" align="center"/>
         <el-table-column prop="tf_flag" :label="$t('message.code')" width="120" fixed="left" align="center"/>
-        <el-table-column prop="machine_sno" :label="$t('message.machine_num')" width="130" align="center"/>
+        <el-table-column prop="machine_number" :label="$t('message.machine_num')" align="center"/>
         <el-table-column prop="sno" :label="$t('message.mno')" width="180" align="center"/>
         <el-table-column fixed="right" prop="image_data" :label="$t('message.mnoImg')" width="300" align="center">
           <template #default="scope">

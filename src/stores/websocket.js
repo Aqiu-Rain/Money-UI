@@ -8,21 +8,25 @@ export const useWebSocketStore = defineStore('websocketStore', {
             status: 'Waiting Connect',
             message: '',
             socket: null,
+            heartbeatTimer: null,
+            lastUrl: null,
         }
     },
     actions: {
         setData(data) {
-            if (this.data.length >= 500) {
+            if (this.data.length >= 50) {
                 this.data = []
-                showMessage('warning', 'The page has reached the 500-entry setting limit. Previous data has been cleared, but you can view it in the history.')
+                showMessage('warning', 'The page has reached the 50-entry setting limit. Previous data has been cleared, but you can view it in the history.')
             }
             this.data.unshift(data)
         },
         connect(url) {
+            this.lastUrl = url;
             this.socket = new WebSocket(url);
             this.socket.onopen = () => {
                 if (this.socket.readyState === WebSocket.OPEN) {
                     this.status = 'Connected'
+                    this.startHeartbeat();
                 }
             };
             this.socket.onclose = () => {
@@ -110,6 +114,33 @@ export const useWebSocketStore = defineStore('websocketStore', {
         },
         sendData(data) {
             this.socket.send(JSON.stringify(data))
+        },
+        ping() {
+            if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                this.socket.send(JSON.stringify({ type: 'heart', data: "ping" }));
+            }
+        },
+        startHeartbeat() {
+            this.heartbeatTimer = setInterval(() => {
+                if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                    this.ping();
+                } else {
+                    this.stopHeartbeat();
+                    this.reconnect();
+                }
+            }, 5000);
+        },
+        stopHeartbeat() {
+            if (this.heartbeatTimer) {
+                clearInterval(this.heartbeatTimer);
+                this.heartbeatTimer = null;
+            }
+        },
+        reconnect() {
+            if (this.socket) {
+                this.disconnect();
+            }
+            this.connect(this.lastUrl);
         }
     }
 })

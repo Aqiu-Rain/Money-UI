@@ -193,7 +193,7 @@ const handleExportPDF = async () => {
         <el-table-column prop="valuta" :label="$t('message.bizhi')" width="120" fixed="left" align="center"/>
         <el-table-column prop="ver" :label="$t('message.version')" width="120" fixed="left" align="center"/>
         <el-table-column prop="tf_flag" :label="$t('message.code')" width="120" fixed="left" align="center"/>
-        <el-table-column prop="machine_sno" :label="$t('message.machine_num')" width="130" align="center"/>
+        <el-table-column prop="machine_number" :label="$t('message.machine_num')" align="center"/>
         <el-table-column prop="sno" :label="$t('message.mno')" width="180" align="center"/>
         <el-table-column fixed="right" prop="image_data" :label="$t('message.mnoImg')" width="300" align="center">
           <template #default="scope">
@@ -231,7 +231,7 @@ const handleExportPDF = async () => {
             <el-table-column prop="valuta" :label="$t('message.bizhi')" width="120" fixed="left" align="center"/>
             <el-table-column prop="ver" :label="$t('message.version')" width="120" fixed="left" align="center"/>
             <el-table-column prop="tf_flag" :label="$t('message.code')" width="120" fixed="left" align="center"/>
-            <el-table-column prop="machine_sno" :label="$t('message.machine_num')" width="130" align="center"/>
+            <el-table-column prop="machine_number" :label="$t('message.machine_num')" align="center"/>
             <el-table-column prop="sno" :label="$t('message.mno')" width="180" align="center"/>
             <el-table-column fixed="right" prop="image_data" :label="$t('message.mnoImg')" width="300" align="center">
               <template #default="scope">
