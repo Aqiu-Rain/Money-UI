@@ -15,8 +15,8 @@ export const useWebSocketStore = defineStore('websocketStore', {
     actions: {
         setData(data) {
             if (this.count >= 15) {
-                // 删除this.data的第一个数据
-                this.data.shift()
+                // 删除this.data的最后数据
+                this.data.pop()
                 this.data.unshift(data)
                 // showMessage('warning', 'The page has reached the 50-entry setting limit. Previous data has been cleared, but you can view it in the history.')
             } else {
