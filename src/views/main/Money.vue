@@ -216,7 +216,7 @@ const handleExportPDF = async () => {
     </div>
   </div>
 
-  <el-dialog v-model="searchDialog" title="" width="90%">
+  <el-dialog v-model="searchDialog" title="" width="80%">
     <div style="width: 100%">
       <div v-if="!isSearching">
         <div style="margin-bottom: 20px;">
