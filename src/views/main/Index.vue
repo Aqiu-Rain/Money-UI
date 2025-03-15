@@ -17,24 +17,24 @@ const tableHeight = computed(() => {
 const store = useWebSocketStore();
 const settingStore = useSettingStore();
 
-const searchedData = computed(()=> {
-  if (searchText.value === "") {
-    return store.data;
-  }
+// const searchedData = computed(()=> {
+//   if (searchText.value === "") {
+//     return store.data;
+//   }
 
-  return store.data.filter((item) => {
-    return item.includes(searchText.value);
-  })
-})
+//   return store.data.filter((item) => {
+//     return item.includes(searchText.value);
+//   })
+// })
 
 
-// const searchedData = computed(() =>
-//     store.data.filter(
-//         (data) =>
-//             !searchText.value ||
-//             data.sno.toLowerCase().includes(searchText.value.toLowerCase())
-//     )
-// )
+const searchedData = computed(() =>
+    store.data.filter(
+        (data) =>
+            !searchText.value ||
+            data.sno.toLowerCase().includes(searchText.value.toLowerCase())
+    )
+)
 
 
 
