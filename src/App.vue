@@ -4,6 +4,10 @@ import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import Logo from "@/assets/image/logo.png"
 import { Icon } from "@iconify/vue";
+import Printer from "@/assets/image/printer.png"
+import Setting from "@/assets/image/setting.png"
+import Language from "@/assets/image/language.png"
+import History from "@/assets/image/history.png"
 
 const languages = [
   { 'key': 'English', 'value': 'en' },
@@ -36,16 +40,16 @@ const goTo = (path) => {
       <div class="menu">
         <div class="menu-items">
           <div class="menu-item active" @click="goTo('/')" v-if="router.currentRoute.value.path === '/'">
-            <Icon icon="emojione:money-bag" width="40" height="40" />
+            <el-image :src="Printer" style="width: 40px;height: 40px;border-radius: 10px;" />
           </div>
           <div class="menu-item" @click="goTo('/')" v-else>
-            <Icon icon="emojione:money-bag" width="40" height="40" />
+            <el-image :src="Printer" style="width: 40px;height: 40px;border-radius: 10px;" />
           </div>
           <div class="menu-item active" @click="goTo('/money')" v-if="router.currentRoute.value.path === '/money'">
-            <Icon icon="fluent-color:history-32" width="40" height="40" />
+            <el-image :src="History" style="width: 40px;height: 40px;border-radius: 10px;" />
           </div>
           <div class="menu-item" @click="goTo('/money')" v-else>
-            <Icon icon="fluent-color:history-32" width="40" height="40" />
+            <el-image :src="History" style="width: 40px;height: 40px;border-radius: 10px;" />
           </div>
         </div>
         <div>
@@ -57,7 +61,7 @@ const goTo = (path) => {
                 trigger="click"
             >
               <template #reference>
-                <Icon icon="cil:language" width="40" height="40"  style="color: #08f4e4" />
+                <el-image :src="Language" style="width: 40px;height: 40px;border-radius: 10px;" />
               </template>
               <template #default>
                 <el-select
@@ -78,10 +82,10 @@ const goTo = (path) => {
 
           </div>
           <div class="setting-container active" @click="goTo('/setting')" v-if="router.currentRoute.value.path === '/setting'">
-            <Icon icon="flat-color-icons:settings" width="40" height="40" />
+            <el-image :src="Setting" style="width: 40px;height: 40px;border-radius: 10px;" />
           </div>
           <div class="setting-container" @click="goTo('/setting')" v-else>
-            <Icon icon="flat-color-icons:settings" width="40" height="40" />
+            <el-image :src="Setting" style="width: 40px;height: 40px;border-radius: 10px;" />
           </div>
         </div>
       </div>
