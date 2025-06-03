@@ -19,6 +19,7 @@ import pdf_icon from '@/assets/image/pdf.png'
 const searchText = ref('')
 const start = ref('')
 const end = ref('')
+const code = ref('all')
 const currentPage = ref(1);
 const limit = ref(100);
 const count = ref(0);
@@ -82,27 +83,24 @@ const handleSearch = () => {
     range = [start.value, end.value]
   }
 
-  if (searchText.value.trim().length === 0) {
-    showMessage('warning', 'Please enter some words');
-  } else {
-    searchDialog.value = true;
-    isSearching.value = true;
+  searchDialog.value = true;
+  isSearching.value = true;
 
-    let data = {
-      q: searchText.value.trim(),
-      date_range: range
-    }
-
-    search_money(data).then(res => {
-      excel_data.value = res.data.excel_data;
-      searchResult.value = res.data.data;
-      searchTotal.value = res.data.total;
-      isSearching.value = false;
-    }).catch(err => {
-      isSearching.value = false;
-      showMessage('error', 'Searching failed:' + err)
-    })
+  let data = {
+    q: searchText.value.trim(),
+    code: code.value,
+    date_range: range
   }
+
+  search_money(data).then(res => {
+    excel_data.value = res.data.excel_data;
+    searchResult.value = res.data.data;
+    searchTotal.value = res.data.total;
+    isSearching.value = false;
+  }).catch(err => {
+    isSearching.value = false;
+    showMessage('error', 'Searching failed:' + err)
+  })
 }
 
 const exportToExcel = () => {
@@ -268,6 +266,11 @@ const handleExportPDF = async () => {
                   style="width: 180px;margin-left:8px;"
                   value-format="YYYY-MM-DD HH:mm:ss"
               />
+              <el-select style="margin-left: 15px; width: 120px" v-model="code" size="large" placeholder="CodeCode">
+                <el-option label="all" value="all"/>
+                <el-option label="1" value="1"/>
+                <el-option label="0" value="0"/>
+              </el-select>
             </template>
             <template #append>
               <el-button :icon="Search" @click="handleSearch"/>
