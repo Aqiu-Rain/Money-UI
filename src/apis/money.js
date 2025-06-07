@@ -18,3 +18,13 @@ export function search_money(data) {
         }
     )
 }
+
+export function export_money(data) {
+    return axios(
+        {
+            method: 'post',
+            url: '/money/export',
+            data
+        }
+    )
+}

@@ -1,7 +1,7 @@
 <script setup>
 import {ref, onMounted, computed, nextTick} from "vue";
 import {Search} from "@element-plus/icons-vue";
-import {get_money_pages, search_money} from "@/apis/money.js";
+import {get_money_pages, search_money, export_money} from "@/apis/money.js";
 import {showMessage} from "@/utils/message.js";
 import {formatDate} from "@/utils/time.js";
 
@@ -104,21 +104,44 @@ const handleSearch = () => {
 }
 
 const exportToExcel = () => {
-  try {
-    excel_exporting.value = true;
-    excel_text.value = 'Exporting...';
-    const worksheet = XLSX.utils.json_to_sheet(excel_data.value);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    const excel_name = searchText.value.trim() + '.xlsx'
-    XLSX.writeFile(workbook, excel_name);
-    excel_exporting.value = false;
-    excel_text.value = 'Export Excel';
-  } catch (error) {
-    showMessage('error', 'export excel failed:' + error.message);
-    excel_exporting.value = false;
-    excel_text.value = 'Export Excel';
+  excel_exporting.value = true;
+  excel_text.value = 'Exporting...';
+  let range = []
+  if (start.value !== '' && end.value !== '') {
+    range = [start.value, end.value]
   }
+
+  let data = {
+    q: searchText.value.trim(),
+    code: code.value,
+    date_range: range
+  }
+
+  export_money(data).then(res => {
+    showMessage('success', res.data.detail + ' ' + 'File path: ' + res.data.file_path);
+    excel_exporting.value = false;
+    excel_text.value = 'Export Excel';
+  }).catch(err => {
+    isSearching.value = false;
+    showMessage('error', 'Exporting failed:' + err)
+    excel_exporting.value = false;
+    excel_text.value = 'Export Excel';
+  })
+  // try {
+  //   excel_exporting.value = true;
+  //   excel_text.value = 'Exporting...';
+  //   const worksheet = XLSX.utils.json_to_sheet(excel_data.value);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+  //   const excel_name = searchText.value.trim() + '.xlsx'
+  //   XLSX.writeFile(workbook, excel_name);
+  //   excel_exporting.value = false;
+  //   excel_text.value = 'Export Excel';
+  // } catch (error) {
+  //   showMessage('error', 'export excel failed:' + error.message);
+  //   excel_exporting.value = false;
+  //   excel_text.value = 'Export Excel';
+  // }
 }
 
 async function mergeSelectorsToPDF(selectors, pdfName = 'output.pdf') {
@@ -327,10 +350,10 @@ const handleExportPDF = async () => {
               <el-image :src="excel_icon" style="width: 30px; height: 30px; margin-right: 5px"></el-image>
               <el-button type="success" :disabled="excel_exporting" @click="exportToExcel()">{{excel_text}}</el-button>
             </div>
-            <div style="display: flex; background-color: skyblue; padding: 3px; border-radius: 3px; margin-right: 10px;">
+            <!-- <div style="display: flex; background-color: skyblue; padding: 3px; border-radius: 3px; margin-right: 10px;">
               <el-image :src="pdf_icon" style="width: 30px; height: 30px; margin-right: 5px"></el-image>
               <el-button type="primary" :disabled="pdf_exporting" @click="handleExportPDF()">{{pdf_text}}</el-button>
-            </div>
+            </div> -->
             <div style="">
               <el-tag type="success" style="margin-left: 10px" size="large">{{ searchTotal }} searched items</el-tag>
             </div>
